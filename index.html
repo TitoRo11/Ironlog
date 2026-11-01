@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101114">
+  <meta name="description" content="A private, personal strength training log.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>IRONLOG — Training</title>
+  <style>
+    :root{color-scheme:dark;--bg:#101114;--panel:#191b20;--panel2:#22252c;--line:#30343d;--muted:#9ba2ad;--text:#f4f5f7;--accent:#c6f36b;--accent2:#a7d84d;--danger:#ff7272;--radius:18px}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+    button,input,select,textarea{font:inherit} button{cursor:pointer}
+    .app{max-width:760px;margin:auto;padding:env(safe-area-inset-top) 16px 20px}
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 14px}
+    .brand{font-weight:900;letter-spacing:.13em;font-size:15px}.brand span{color:var(--accent)}
+    .eyebrow{color:var(--muted);font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700}
+    h1{font-size:30px;line-height:1.1;margin:6px 0 8px;letter-spacing:-.04em} h2{font-size:19px;margin:0 0 12px} h3{font-size:15px;margin:0}
+    p{color:var(--muted);margin:5px 0 0}
+    .page{display:none}.page.active{display:block}
+    .hero{background:linear-gradient(135deg,#252b20,#1b2018 58%,#191b20);border:1px solid #39432d;border-radius:22px;padding:20px;margin:12px 0 18px}
+    .hero .big{font-size:34px;font-weight:850;letter-spacing:-.05em;margin-top:8px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:15px;margin-bottom:12px}
+    .metric{font-size:25px;font-weight:800;letter-spacing:-.04em}.metric-label{color:var(--muted);font-size:12px}
+    .btn{border:0;border-radius:13px;padding:12px 15px;background:var(--accent);color:#171a12;font-weight:800}
+    .btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+    .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+    .btn.danger{background:#3a2022;color:#ffb1b1;border:1px solid #603235}
+    .btn.small{padding:8px 11px;font-size:13px;border-radius:10px}
+    .row{display:flex;align-items:center;gap:9px}.between{justify-content:space-between}.wrap{flex-wrap:wrap}
+    .full{width:100%}.muted{color:var(--muted)}.tiny{font-size:12px;color:var(--muted)}
+    .stack{display:grid;gap:10px}.field{display:grid;gap:6px;min-width:0;flex:1}
+    label{font-size:12px;color:var(--muted);font-weight:650}
+    input,select,textarea{width:100%;background:#111318;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:11px 12px;outline:none}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+    textarea{min-height:75px;resize:vertical}
+    .nav{position:fixed;z-index:5;bottom:0;left:0;right:0;background:rgba(18,19,23,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:9px 8px calc(9px + env(safe-area-inset-bottom));display:flex;justify-content:center}
+    .nav-inner{width:min(760px,100%);display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+    .nav button{background:transparent;color:var(--muted);border:0;padding:7px 3px;font-size:11px;font-weight:700;border-radius:10px}
+    .nav button span{display:block;font-size:19px;margin-bottom:2px}.nav button.active{color:var(--accent);background:#252a20}
+    .exercise{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
+    .set-head,.set-row{display:grid;grid-template-columns:30px 1fr 1fr 34px;gap:7px;align-items:center}
+    .set-head{font-size:11px;color:var(--muted);padding:10px 2px 5px}.set-row{margin:5px 0}
+    .set-row input{padding:9px 6px;text-align:center}.set-num{text-align:center;color:var(--muted);font-size:12px}
+    .check{width:32px;height:32px;border:1px solid var(--line);border-radius:9px;background:var(--panel2);color:var(--accent);font-weight:900}
+    .pill{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:5px 9px;color:var(--muted);font-size:11px}
+    .list-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+    .list-item:last-child{border:0}.empty{text-align:center;padding:28px 14px;color:var(--muted)}
+    .bar-wrap{height:9px;background:#30343d;border-radius:99px;overflow:hidden;margin-top:8px}.bar{height:100%;background:var(--accent);border-radius:99px}
+    .timer{font-size:56px;font-weight:850;letter-spacing:-.06em;text-align:center;font-variant-numeric:tabular-nums;padding:15px}
+    .chart{width:100%;height:170px;display:block}.toast{position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:#f4f5f7;color:#15171a;padding:10px 15px;border-radius:12px;font-weight:700;z-index:20;display:none;max-width:90%;text-align:center}
+    .modal{position:fixed;inset:0;background:#0009;z-index:15;display:none;align-items:flex-end;justify-content:center}.modal.open{display:flex}
+    .sheet{background:var(--panel);border:1px solid var(--line);border-radius:22px 22px 0 0;width:min(760px,100%);padding:20px 16px calc(24px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto}
+    .sheet-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    @media(min-width:650px){.app{padding-left:24px;padding-right:24px}.grid.three{grid-template-columns:repeat(3,1fr)}.modal{align-items:center}.sheet{border-radius:22px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header><div class="brand">IRON<span>LOG</span></div><div class="row"><span class="pill" id="saveStatus">● Saved on this device</span></div></header>
+
+  <main id="home" class="page active">
+    <div class="eyebrow" id="todayLabel">YOUR TRAINING</div>
+    <h1>Build strength.<br><span style="color:var(--accent)">Track progress.</span></h1>
+    <p>Your training history, in your pocket.</p>
+    <div class="hero">
+      <div class="eyebrow">THIS WEEK</div><div class="big" id="weekCount">0 sessions</div>
+      <p id="weekVolume">Log your first workout to get started.</p>
+      <div style="margin-top:17px"><button class="btn" onclick="startWorkout()">＋ Start workout</button></div>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="metric" id="totalSessions">0</div><div class="metric-label">Total sessions</div></div>
+      <div class="card"><div class="metric" id="totalVolume">0 kg</div><div class="metric-label">Lifetime volume</div></div>
+    </div>
+    <div class="card"><div class="row between"><h2>Recent sessions</h2><button class="btn ghost small" onclick="showPage('history')">See all</button></div><div id="recentSessions"></div></div>
+    <div class="card"><div class="row between"><h2>Quick rest timer</h2><span class="pill">Between sets</span></div><div class="timer" id="timerDisplay">01:30</div><div class="row"><button class="btn secondary full" onclick="setTimer(60)">60 sec</button><button class="btn secondary full" onclick="setTimer(90)">90 sec</button><button class="btn secondary full" onclick="setTimer(120)">2 min</button></div><div class="row" style="margin-top:9px"><button class="btn full" id="timerToggle" onclick="toggleTimer()">Start timer</button><button class="btn ghost" onclick="resetTimer()">Reset</button></div></div>
+  </main>
+
+  <main id="workout" class="page">
+    <div class="eyebrow">TRAINING SESSION</div><h1 id="workoutTitle">New workout</h1><p id="workoutDate"></p>
+    <div class="row wrap" style="margin:15px 0"><button class="btn" onclick="openExercisePicker()">＋ Add exercise</button><button class="btn secondary" onclick="finishWorkout()">Finish workout</button><button class="btn ghost" onclick="cancelWorkout()">Cancel</button></div>
+    <div id="workoutExercises"></div>
+    <div class="card"><label for="workoutNotes">SESSION NOTES</label><textarea id="workoutNotes" placeholder="How did it feel? Anything to remember?"></textarea></div>
+  </main>
+
+  <main id="history" class="page">
+    <div class="eyebrow">YOUR TRAINING LOG</div><h1>History</h1><p>Every session adds to your story.</p>
+    <div class="card" style="margin-top:16px"><div id="historyList"></div></div>
+  </main>
+
+  <main id="progress" class="page">
+    <div class="eyebrow">THE NUMBERS</div><h1>Progress</h1><p>Track your best lifts and training volume.</p>
+    <div class="grid" style="margin-top:16px">
+      <div class="card"><div class="metric" id="prCount">0</div><div class="metric-label">Personal records</div></div>
+      <div class="card"><div class="metric" id="exerciseCount">0</div><div class="metric-label">Exercises logged</div></div>
+    </div>
+    <div class="card"><h2>Personal records</h2><div id="prList"></div></div>
+    <div class="card"><h2>Exercise progress</h2><div class="field"><label for="chartExercise">SELECT EXERCISE</label><select id="chartExercise" onchange="drawProgress()"></select></div><div id="chartSummary" class="tiny" style="margin-top:10px"></div><svg class="chart" id="progressChart" viewBox="0 0 600 170" preserveAspectRatio="none" aria-label="Exercise weight progress chart"></svg></div>
+  </main>
+
+  <main id="library" class="page">
+    <div class="eyebrow">YOUR MOVEMENT DATABASE</div><h1>Exercises</h1><p>Build a library that fits your training.</p>
+    <div class="row" style="margin:15px 0"><input id="exerciseSearch" placeholder="Search exercises…" oninput="renderLibrary()"><button class="btn" onclick="openCustomExercise()">＋</button></div>
+    <div class="card"><div id="libraryList"></div></div>
+  </main>
+</div>
+
+<nav class="nav"><div class="nav-inner">
+  <button class="active" data-page="home" onclick="showPage('home')"><span>⌂</span>HOME</button>
+  <button data-page="history" onclick="showPage('history')"><span>▤</span>HISTORY</button>
+  <button data-page="progress" onclick="showPage('progress')"><span>↗</span>PROGRESS</button>
+  <button data-page="library" onclick="showPage('library')"><span>＋</span>EXERCISES</button>
+</div></nav>
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="pickerModal" onclick="if(event.target===this)closeModal('pickerModal')"><div class="sheet"><div class="sheet-top"><h2>Add an exercise</h2><button class="btn ghost small" onclick="closeModal('pickerModal')">Close</button></div><input id="pickerSearch" placeholder="Find an exercise…" oninput="renderPicker()"><div id="pickerList" style="margin-top:10px"></div><button class="btn secondary full" style="margin-top:12px" onclick="openCustomExercise()">＋ Create custom exercise</button></div></div>
+<div class="modal" id="customModal" onclick="if(event.target===this)closeModal('customModal')"><div class="sheet"><div class="sheet-top"><h2>New exercise</h2><button class="btn ghost small" onclick="closeModal('customModal')">Close</button></div><div class="stack"><div class="field"><label>EXERCISE NAME</label><input id="customName" placeholder="e.g. Incline chest press"></div><div class="field"><label>MUSCLE GROUP</label><select id="customGroup"><option>Chest</option><option>Back</option><option>Shoulders</option><option>Arms</option><option>Legs</option><option>Core</option><option>Full body</option><option>Other</option></select></div><button class="btn full" onclick="saveCustomExercise()">Save exercise</button></div></div></div>
+
+<script>
+const KEY='ironlog-v1';
+const defaults=[
+ ['Bench Press','Chest'],['Incline Dumbbell Press','Chest'],['Dumbbell Fly','Chest'],['Cable Fly','Chest'],['Push-up','Chest'],
+ ['Pull-up','Back'],['Lat Pulldown','Back'],['Barbell Row','Back'],['Seated Cable Row','Back'],['Deadlift','Back'],
+ ['Overhead Press','Shoulders'],['Lateral Raise','Shoulders'],['Face Pull','Shoulders'],
+ ['Barbell Curl','Arms'],['Dumbbell Curl','Arms'],['Hammer Curl','Arms'],['Triceps Pushdown','Arms'],['Skull Crusher','Arms'],
+ ['Squat','Legs'],['Leg Press','Legs'],['Romanian Deadlift','Legs'],['Leg Curl','Legs'],['Leg Extension','Legs'],['Calf Raise','Legs'],
+ ['Plank','Core'],['Cable Crunch','Core']
+].map((x,i)=>({id:'d'+i,name:x[0],group:x[1],custom:false}));
+let state=loadState(),current=null,timerSeconds=90,timerRemaining=90,timerInterval=null;
+function loadState(){try{let s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.sessions))return s}catch(e){}return {sessions:[],exercises:defaults}}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));document.getElementById('saveStatus').textContent='● Saved on this device'}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmtDate(d){return new Date(d).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}
+function showToast(t){let el=document.getElementById('toast');el.textContent=t;el.style.display='block';setTimeout(()=>el.style.display='none',2200)}
+function showPage(id){if(current){showToast('Finish or cancel your active workout first.');return}document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));renderAll()}
+function totalVolume(){return state.sessions.reduce((sum,s)=>sum+s.exercises.reduce((a,e)=>a+e.sets.reduce((b,z)=>b+(+z.weight||0)*(+z.reps||0),0),0),0)}
+function startWorkout(){if(current)return;current={id:Date.now(),date:new Date().toISOString(),exercises:[],notes:''};document.getElementById('workoutNotes').value='';document.getElementById('workoutTitle').textContent='New workout';document.getElementById('workoutDate').textContent=new Date().toLocaleString();showWorkout()}
+function showWorkout(){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('workout').classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));renderWorkout()}
+function addExercise(id){let ex=state.exercises.find(x=>x.id===id);if(!ex||!current)return;let prev=previousExercise(id);let sets=prev?prev.sets.map(s=>({reps:s.reps,weight:s.weight,done:false})).slice(0,3):[{reps:10,weight:0,done:false},{reps:10,weight:0,done:false},{reps:10,weight:0,done:false}];current.exercises.push({id:ex.id,name:ex.name,group:ex.group,sets});closeModal('pickerModal');closeModal('customModal');renderWorkout()}
+function previousExercise(id){for(let s of [...state.sessions].sort((a,b)=>new Date(b.date)-new Date(a.date))){let e=s.exercises.find(x=>x.id===id);if(e)return e}return null}
+function renderWorkout(){let root=document.getElementById('workoutExercises');if(!current)return;root.innerHTML=current.exercises.length?current.exercises.map((e,i)=>`<section class="exercise"><div class="row between"><div><h3>${esc(e.name)}</h3><div class="tiny">${esc(e.group)} ${previousExercise(e.id)?'· Previous: '+previousSummary(previousExercise(e.id)):''}</div></div><button class="btn ghost small" onclick="removeExercise(${i})">Remove</button></div><div class="set-head"><span>SET</span><span>REPS</span><span>KG</span><span>✓</span></div>${e.sets.map((s,j)=>`<div class="set-row"><span class="set-num">${j+1}</span><input type="number" min="0" inputmode="numeric" aria-label="Reps, set ${j+1}" value="${esc(s.reps)}" onchange="updateSet(${i},${j},'reps',this.value)"><input type="number" min="0" step="0.5" inputmode="decimal" aria-label="Weight in kg, set ${j+1}" value="${esc(s.weight)}" onchange="updateSet(${i},${j},'weight',this.value)"><button class="check" aria-label="Complete set" onclick="toggleSet(${i},${j})">${s.done?'✓':'○'}</button></div>`).join('')}<div class="row wrap" style="margin-top:10px"><button class="btn secondary small" onclick="addSet(${i})">＋ Add set</button><button class="btn ghost small" onclick="setTimer(90);toggleTimer()">Start rest timer</button></div></section>`).join(''):'<div class="empty">No exercises yet.<br>Tap “Add exercise” to begin.</div>'}
+function previousSummary(e){let s=e.sets[0];return s?`${s.reps} × ${s.weight} kg`:''}
+function updateSet(i,j,k,v){current.exercises[i].sets[j][k]=Math.max(0,Number(v)||0)}
+function toggleSet(i,j){current.exercises[i].sets[j].done=!current.exercises[i].sets[j].done;renderWorkout()}
+function addSet(i){let e=current.exercises[i],last=e.sets[e.sets.length-1]||{reps:10,weight:0};e.sets.push({reps:last.reps,weight:last.weight,done:false});renderWorkout()}
+function removeExercise(i){current.exercises.splice(i,1);renderWorkout()}
+function finishWorkout(){if(!current)return;if(!current.exercises.length){showToast('Add at least one exercise first.');return}current.notes=document.getElementById('workoutNotes').value;current.exercises.forEach(e=>e.sets=e.sets.filter(s=>s.reps||s.weight));state.sessions.push(current);state.sessions.sort((a,b)=>new Date(b.date)-new Date(a.date));current=null;save();showPage('home');showToast('Workout saved. Nice work!')}
+function cancelWorkout(){if(confirm('Discard this workout?')){current=null;showPage('home')}}
+function openExercisePicker(){document.getElementById('pickerSearch').value='';renderPicker();document.getElementById('pickerModal').classList.add('open')}
+function renderPicker(){let q=document.getElementById('pickerSearch').value.toLowerCase();let items=state.exercises.filter(e=>(e.name+' '+e.group).toLowerCase().includes(q));document.getElementById('pickerList').innerHTML=items.map(e=>`<div class="list-item"><div><b>${esc(e.name)}</b><div class="tiny">${esc(e.group)}</div></div><button class="btn small" onclick="addExercise('${e.id}')">Add</button></div>`).join('')||'<div class="empty">No matching exercises.</div>'}
+function openCustomExercise(){document.getElementById('customName').value='';document.getElementById('customModal').classList.add('open')}
+function saveCustomExercise(){let name=document.getElementById('customName').value.trim();if(!name){showToast('Enter an exercise name.');return}let ex={id:'c'+Date.now(),name,group:document.getElementById('customGroup').value,custom:true};state.exercises.push(ex);save();closeModal('customModal');renderLibrary();if(current)addExercise(ex.id);else showToast('Exercise added to your library.')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function renderLibrary(){let q=(document.getElementById('exerciseSearch')?.value||'').toLowerCase();let items=state.exercises.filter(e=>(e.name+' '+e.group).toLowerCase().includes(q));document.getElementById('libraryList').innerHTML=items.map(e=>`<div class="list-item"><div><b>${esc(e.name)}</b><div class="tiny">${esc(e.group)}${e.custom?' · Custom':''}</div></div><span class="pill">${e.custom?'Custom':'Exercise'}</span></div>`).join('')||'<div class="empty">No exercises found.</div>'}
+function renderHistory(){let root=document.getElementById('historyList');root.innerHTML=state.sessions.length?state.sessions.map(s=>`<div class="list-item"><div><b>${fmtDate(s.date)}</b><div class="tiny">${s.exercises.length} exercises · ${s.exercises.reduce((n,e)=>n+e.sets.length,0)} sets · ${Math.round(s.exercises.reduce((n,e)=>n+e.sets.reduce((a,z)=>a+z.reps*z.weight,0),0)).toLocaleString()} kg volume</div>${s.notes?`<div class="tiny">${esc(s.notes)}</div>`:''}</div><button class="btn ghost small" onclick="deleteSession(${s.id})">Delete</button></div>`).join(''):'<div class="empty">Your completed workouts will appear here.</div>'}
+function deleteSession(id){if(confirm('Delete this workout from your history?')){state.sessions=state.sessions.filter(s=>s.id!==id);save();renderAll()}}
+function getPRs(){let map={};state.sessions.forEach(s=>s.exercises.forEach(e=>e.sets.forEach(z=>{let key=e.id;if(!map[key]||z.weight>map[key].weight)map[key]={name:e.name,weight:+z.weight||0,reps:+z.reps||0}})));return Object.values(map).filter(x=>x.weight>0).sort((a,b)=>b.weight-a.weight)}
+function renderProgress(){let prs=getPRs();document.getElementById('prCount').textContent=prs.length;document.getElementById('exerciseCount').textContent=new Set(state.sessions.flatMap(s=>s.exercises.map(e=>e.id))).size;document.getElementById('prList').innerHTML=prs.length?prs.map(p=>`<div class="list-item"><div><b>${esc(p.name)}</b><div class="tiny">Best recorded set · ${p.reps} reps</div></div><b style="color:var(--accent)">${p.weight} kg</b></div>`).join(''):'<div class="empty">Log weighted sets to see your personal records.</div>';let sel=document.getElementById('chartExercise'),old=sel.value;let seen=[...new Map(state.sessions.flatMap(s=>s.exercises.map(e=>[e.id,{id:e.id,name:e.name}]))).values()];sel.innerHTML=seen.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');if(seen.some(e=>e.id===old))sel.value=old;drawProgress()}
+function drawProgress(){let id=document.getElementById('chartExercise').value,svg=document.getElementById('progressChart');if(!id){svg.innerHTML='';document.getElementById('chartSummary').textContent='Log an exercise to see your progress.';return}let points=[];state.sessions.slice().sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(s=>{let e=s.exercises.find(x=>x.id===id);if(e){let best=Math.max(...e.sets.map(z=>+z.weight||0));if(best>0)points.push({date:fmtDate(s.date),weight:best})}});if(!points.length){svg.innerHTML='';return}let max=Math.max(...points.map(p=>p.weight)),min=Math.min(...points.map(p=>p.weight)),range=max-min||1;let coords=points.map((p,i)=>[35+(points.length===1?0:i*530/(points.length-1)),140-(p.weight-min)/range*110]);let poly=coords.map(p=>p.join(',')).join(' ');svg.innerHTML=`<line x1="25" y1="140" x2="585" y2="140" stroke="#444954"/><polyline points="${poly}" fill="none" stroke="#c6f36b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>${coords.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#c6f36b"/>`).join('')}<text x="25" y="16" fill="#9ba2ad" font-size="12">${max} kg</text><text x="25" y="162" fill="#9ba2ad" font-size="12">${min} kg</text>`;document.getElementById('chartSummary').textContent=`Best recorded weight: ${max} kg · ${points.length} workout${points.length===1?'':'s'} logged.`}
+function renderHome(){let now=new Date(),start=new Date(now);start.setDate(now.getDate()-((now.getDay()+6)%7));start.setHours(0,0,0,0);let week=state.sessions.filter(s=>new Date(s.date)>=start);document.getElementById('todayLabel').textContent=now.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}).toUpperCase();document.getElementById('weekCount').textContent=week.length+' session'+(week.length===1?'':'s');let vol=week.reduce((a,s)=>a+s.exercises.reduce((b,e)=>b+e.sets.reduce((c,z)=>c+z.weight*z.reps,0),0),0);document.getElementById('weekVolume').textContent=Math.round(vol).toLocaleString()+' kg total volume this week';document.getElementById('totalSessions').textContent=state.sessions.length;document.getElementById('totalVolume').textContent=Math.round(totalVolume()).toLocaleString()+' kg';let recent=state.sessions.slice(0,3);document.getElementById('recentSessions').innerHTML=recent.length?recent.map(s=>`<div class="list-item"><div><b>${fmtDate(s.date)}</b><div class="tiny">${s.exercises.map(e=>e.name).join(' · ')}</div></div><span class="pill">${s.exercises.length} exercises</span></div>`).join(''):'<div class="empty">No workouts yet. Your first session starts here.</div>'}
+function renderAll(){renderHome();renderHistory();renderProgress();renderLibrary()}
+function setTimer(sec){timerSeconds=sec;timerRemaining=sec;updateTimer();if(timerInterval){clearInterval(timerInterval);timerInterval=null;document.getElementById('timerToggle').textContent='Start timer'}}
+function updateTimer(){let m=Math.floor(timerRemaining/60),s=timerRemaining%60;document.getElementById('timerDisplay').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function toggleTimer(){let btn=document.getElementById('timerToggle');if(timerInterval){clearInterval(timerInterval);timerInterval=null;btn.textContent='Resume timer';return}if(timerRemaining<=0)timerRemaining=timerSeconds;btn.textContent='Pause timer';timerInterval=setInterval(()=>{timerRemaining--;updateTimer();if(timerRemaining<=0){clearInterval(timerInterval);timerInterval=null;btn.textContent='Start timer';if(navigator.vibrate)navigator.vibrate([250,100,250]);showToast('Rest complete — next set!')}},1000)}
+function resetTimer(){if(timerInterval)clearInterval(timerInterval);timerInterval=null;timerRemaining=timerSeconds;updateTimer();document.getElementById('timerToggle').textContent='Start timer'}
+function exportData(){let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ironlog-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url)}
+function importData(file){let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.sessions)||!Array.isArray(d.exercises))throw Error();if(confirm('Replace current data with this backup?')){state=d;save();renderAll();showToast('Backup restored.')}}catch(e){showToast('That backup file is not valid.')}};r.readAsText(file)}
+// Data tools are available from the exercise page footer.
+document.getElementById('library').insertAdjacentHTML('beforeend','<div class="card"><h2>Data & backup</h2><p>Keep a copy of your training history somewhere safe.</p><div class="row wrap" style="margin-top:12px"><button class="btn secondary small" onclick="exportData()">Export backup</button><label class="btn ghost small" style="cursor:pointer">Import backup<input type="file" accept="application/json" hidden onchange="importData(this.files[0])"></label></div><p class="tiny" style="margin-top:10px">Your records are stored in this browser on this iPhone. Export a backup before clearing browser data or changing devices.</p></div>');
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+renderAll();updateTimer();
+</script>
+</body>
+</html>
