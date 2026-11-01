@@ -1,45 +1,30 @@
-# IRONLOG — personal workout tracker
+# IRONLOG V3
 
-A mobile-first Progressive Web App (PWA) for strength training.
+A private, local-first workout tracker PWA for iPhone and desktop.
 
-## Files
-- `index.html` — app interface and workout logging logic
-- `manifest.json` — installable PWA metadata
-- `sw.js` — basic offline app-shell cache
-- `icon-192.png`, `icon-512.png` — app icons
+## Deploy with GitHub Pages
 
-## Publish with GitHub Pages
-1. Create a GitHub account and a **public** repository, e.g. `ironlog`.
-2. Upload all five files from this folder to the repository root.
-3. In the repository, open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Choose branch `main`, folder `/(root)`, then Save.
-6. Wait for the Pages URL shown there, usually `https://YOURNAME.github.io/ironlog/`.
+Upload the contents of this folder to the root of the existing `Ironlog` repository, replacing the existing files, then commit to `main`. GitHub Pages should use `main` and `/(root)`.
 
 ## Install on iPhone
-1. Open the published URL in Safari (not an in-app browser).
-2. Tap Share → Add to Home Screen.
-3. If shown, enable **Open as Web App**, then tap Add.
-4. Launch IRONLOG from its new Home Screen icon.
 
-## Data and privacy
-Workout records are stored in browser localStorage on the device/browser where you use the app. The GitHub Pages site serves the app files; it does not receive workout records. Export a JSON backup regularly from Exercises → Data & backup. Import a previous JSON backup to restore it. Do not clear Safari website data unless you have a backup.
+Open the published GitHub Pages URL in Safari, tap Share → Add to Home Screen. Choose Open as Web App if offered.
 
-This first version has no account or cloud sync. Data does not automatically move between devices. It is a client-side app; the GitHub repository contains the app source, not your logged workout data.
+## Data and backups
 
-## Current features
-- Exercise library with common strength exercises and custom exercises
-- Session logging with sets, reps, weight, completed-set toggles
-- Previous recorded sets shown when adding an exercise; prefilled from last session
-- Workout notes
-- Personal best recorded weight by exercise
-- Progress chart of best recorded weight per session
-- Rest timer
-- Session history and volume totals
-- JSON export/import backup
-- Basic offline app-shell caching after first online load
+Workout data remains in browser `localStorage` under the existing `ironlog-v1` key. This update deliberately retains that key and migrates older sets by adding `warmup: false` where missing. The service worker cache is separate from workout data. Export JSON backups regularly; clearing Safari website data can erase local workouts.
 
-## Important limitations / next improvements
-- Records are stored per browser origin and device; use export/import backups.
-- This is a starter version. It does not yet include cloud sync, bodyweight tracking, exercise editing/deletion, estimated 1RM, or richer analytics.
-- The app uses kilograms as its displayed weight unit.
+## V3 features
+
+- Dual-axis exercise progression chart: reps on the left, kg on the right, by workout date.
+- Graph periods: 1m, 3m, 6m, 1y, all time.
+- Progress filters for exercise, workout/session, and muscle group.
+- Last/Best performance comparison in the workout editor.
+- Rules-based progressive-overload guidance that considers exercise order/fatigue and exercise category.
+- Exercise search picker with a scrollable result area.
+- Clickable workout history with workout renaming and copy-to-new-workout.
+- Warm-up set markers, excluded from PRs and progression charting.
+- Home-screen PR achievement links to exercise progress.
+- Offline app shell and network-first page navigation.
+
+No workout data is uploaded to GitHub Pages. The coaching recommendation is a local heuristic, not a cloud AI service or medical advice.

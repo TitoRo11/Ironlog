@@ -1,5 +1,4 @@
-
-const CACHE = 'ironlog-cache-v3';
+const CACHE = 'ironlog-cache-v4';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', event => {
@@ -13,9 +12,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(
-      keys.filter(key => key !== CACHE).map(key => caches.delete(key))
-    );
+    await Promise.all(keys.filter(key => key.startsWith('ironlog-cache-') && key !== CACHE).map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
@@ -23,7 +20,6 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
-
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
@@ -53,7 +49,7 @@ self.addEventListener('fetch', event => {
       }
       return response;
     } catch (error) {
-      return cached || Response.error();
+      return Response.error();
     }
   })());
 });
